@@ -30,6 +30,17 @@ struct wpadremap {
 };
 
 
+enum modifiers {
+	MOD_NONE = 0,
+	MOD_SHIFT = 1,
+	MOD_CAPSLOCK = 2,
+	MOD_CTRL = 4,
+	MOD_ALT = 8,
+	MOD_LOGO = 64,
+	MOD_ALTGR = 128
+};
+
+
 void fail(const char *format, ...)
 {
 	va_list vas;
@@ -84,9 +95,10 @@ static const struct libinput_interface interface = {
 
 static void handle_libinput_tablet_pad_button(struct wpadremap *wpr, struct libinput_event *ev)
 {
-	struct libinput_event_tablet_pad *t = libinput_event_get_tablet_pad_event(ev);
-	unsigned int pad_button = libinput_event_tablet_pad_get_button_number(t);
-	enum libinput_button_state state = libinput_event_tablet_pad_get_button_state(t);
+	struct libinput_event_tablet_pad *evp = libinput_event_get_tablet_pad_event(ev);
+	unsigned int pad_button = libinput_event_tablet_pad_get_button_number(evp);
+	enum libinput_button_state state = libinput_event_tablet_pad_get_button_state(evp);
+	int modifiers = MOD_CTRL | MOD_SHIFT;
 	bool is_pressed = state == LIBINPUT_BUTTON_STATE_PRESSED;
 
 	int keycode = pad_button_to_keycode(pad_button);
@@ -103,6 +115,9 @@ static void handle_libinput_tablet_pad_button(struct wpadremap *wpr, struct libi
 		pad_button, keycode, is_pressed ? "pressed" : "released"
 	);
 
+	zwp_virtual_keyboard_v1_modifiers(
+		wpr->keyboard, is_pressed ? modifiers : 0, 0, 0, 0
+	);
 	zwp_virtual_keyboard_v1_key(
 		wpr->keyboard, 0, keycode,
 		is_pressed ? WL_KEYBOARD_KEY_STATE_PRESSED : WL_KEYBOARD_KEY_STATE_RELEASED
