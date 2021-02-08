@@ -98,7 +98,7 @@ static void handle_libinput_tablet_pad_button(struct wpadremap *wpr, struct libi
 	struct libinput_event_tablet_pad *evp = libinput_event_get_tablet_pad_event(ev);
 	unsigned int pad_button = libinput_event_tablet_pad_get_button_number(evp);
 	enum libinput_button_state state = libinput_event_tablet_pad_get_button_state(evp);
-	int modifiers = MOD_CTRL | MOD_SHIFT;
+	int modifiers = MOD_ALT;
 	bool is_pressed = state == LIBINPUT_BUTTON_STATE_PRESSED;
 
 	int keycode = pad_button_to_keycode(pad_button);
