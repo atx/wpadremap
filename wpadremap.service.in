@@ -1,0 +1,9 @@
+[Unit]
+Description=Drawing tablet pad remapper
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=@libexecdir@/wpadremap
+Restart=on-failure

@@ -27,11 +27,30 @@ xkbcommon = dependency('xkbcommon')
 libinput = dependency('libinput')
 libudev = dependency('libudev')
 rt = cc.find_library('rt')
+systemd = dependency('systemd')
 
 
 prefix = get_option('prefix')
 conf_data = configuration_data()
 conf_data.set('prefix', prefix)
+conf_data.set('libexecdir',
+    join_paths(get_option('prefix'), get_option('libexecdir')))
+conf_data.set('systemd_service', '')
+
+if systemd.found()
+    systemd_service_file = 'wpadremap.service'
+    user_unit_dir = systemd.get_pkgconfig_variable('systemduserunitdir',
+        define_variable: ['prefix', get_option('prefix')])
+    conf_data.set('systemd_service', 'SystemdService=' + systemd_service_file)
+
+    configure_file(
+        configuration: conf_data,
+        input: 'wpadremap.service.in',
+        output: '@BASENAME@',
+        install_dir: user_unit_dir,
+    )
+
+endif
 
 
 src_files = files(
@@ -53,5 +72,6 @@ executable(
         libudev,
     ],
     install: true,
+    install_dir: get_option('libexecdir'),
 )
 
