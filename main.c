@@ -149,6 +149,7 @@ static void handle_libinput_events(struct wpadremap *wpr)
 			// Meh
 			break;
 		};
+		libinput_event_destroy(ev);
 	}
 }
 
