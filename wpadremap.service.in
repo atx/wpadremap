@@ -7,3 +7,6 @@ After=graphical-session.target
 Type=simple
 ExecStart=@libexecdir@/wpadremap
 Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target
